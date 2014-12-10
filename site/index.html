@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body onload="draw()">
+    <script type="text/javascript">
+        var canvas = document.getElementById("myCanvas");
+        var status = false;
+
+        function onMouseMove(event){
+            if(status){
+                document.getElementById("div").innerHTML="true: (" + event.clientX + "," + event.clientY + ")";
+            }else{
+                document.getElementById("div").innerHTML="false: (" + event.clientX + "," + event.clientY + ")";
+            }
+        }
+        function onMoseDown(event) {
+            status = true;
+            document.getElementById("div").innerHTML="down: (" + event.clientX + "," + event.clientY + ")";
+        }
+        function onMoseUp(event){
+            status = false;
+            document.getElementById("div").innerHTML="up: (" + event.clientX + "," + event.clientY + ")";
+        }
+        function draw(){
+            var c=document.getElementById("myCanvas");
+            var cxt=c.getContext("2d");
+            cxt.fillStyle="#FF0000";
+            cxt.fillRect(0,0,150,75);
+        }
+    </script>
+    <canvas id="myCanvas" style="width: 100%;height: 500px"
+            onmousemove="onMouseMove(event)"
+            onmousedown="onMoseDown(event)"
+            onmouseup="onMoseUp(event)">
+        Your browser does not support the video tag.
+    </canvas>
+    <div id="div">
+
+    </div>
+</body>
+</html>
