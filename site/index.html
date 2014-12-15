@@ -3,39 +3,74 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+
     <script type="text/javascript">
         var canvas = document.getElementById("myCanvas");
+        var context;
+        var offsetX;
+        var offsetY;
         var flag = false;
+        var preX;
+        var preY;
+        var currentUrl;
+
+        window.onload = function(){
+            canvas = document.getElementById("myCanvas");
+            context = canvas.getContext("2d");
+            canvas.width = canvas.parentNode.clientWidth;
+            canvas.height = canvas.parentNode.clientHeight;
+            currentUrl = this.location.href;
+            context.lineWidth = 5;
+            context.save();
+            context.strokeStyle = "#ff0000";
+            context.strokeRect(0,0,canvas.width,canvas.height);
+            context.restore();
+        };
+
         function onMouseMove(event){
+            var myBox = getPointOnCanvas(canvas,event.pageX,event.pageY);
+            var x = myBox.offsetX;
+            var y = myBox.offsetY;
             if(flag){
-                document.getElementById("div").innerHTML="true: (" + event.clientX + "," + event.clientY + ")";
+                context.bezierCurveTo(preX,preY,(preX + x)/2,(preY + y)/2,x,y);
+                context.stroke();
+                preX = x;
+                preY = y;
+                window.location.hash = "drawing[" + x + " : " + y + "]";
             }else{
-                document.getElementById("div").innerHTML="false: (" + event.clientX + "," + event.clientY + ")";
+                window.location.hash = "floating[" + x + " : " + y + "]";
             }
         }
 
         function onMoseDown(event) {
             flag = true;
-            //document.getElementById("div").innerHTML="down: (" + event.clientX + "," + event.clientY + ")";
+            var myBox = getPointOnCanvas(canvas,event.pageX,event.pageY);
+            var x = preX = myBox.offsetX;
+            var y = preY = myBox.offsetY;
+            context.moveTo(x,y);
+
+            window.location.hash = "down[" + x + " : " + y + "]";
         }
 
         function onMoseUp(event){
             flag = false;
-            //document.getElementById("div").innerHTML="up: (" + event.clientX + "," + event.clientY + ")";
+            window.location.hash = "up[" + event.pageX + " : " + event.pageY + "]";
         }
 
+        function getPointOnCanvas(canvas, x, y) {
+            var bBox =canvas.getBoundingClientRect();
+            return {offsetX: x - bBox.left *(canvas.width / bBox.width), offsetY:y - bBox.top  * (canvas.height / bBox.height)};
+        }
     </script>
 </head>
 <body>
-<div id="div">
-
-</div>
-    <canvas id="myCanvas" style="width: 100%;height: 500px"
+    <canvas id="myCanvas" style="width: 100%;height: 600px"
             onmousemove="onMouseMove(event)"
             onmousedown="onMoseDown(event)"
-            onmouseup="onMoseUp(event)">
+            onmouseup="onMoseUp(event)"
+            >
         Your browser does not support the video tag.
     </canvas>
-
+    <div id="div"></div>
 </body>
 </html>
